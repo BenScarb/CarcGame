@@ -6,7 +6,7 @@ import decimal
 class Jsonable(object):
     def __iter__(self):
         for attr, value in self.__dict__.items():
-#            print("attr: " + attr  + "- type:" + str(type(value)))
+            #print("attr: " + attr  + "- type:" + str(type(value)))
             if isinstance(value, datetime.datetime):
                 iso = value.isoformat()
                 yield attr, iso
@@ -14,11 +14,9 @@ class Jsonable(object):
                 yield attr, str(value)
             elif isinstance(value, tuple):
                 a = []
-                a.append(value[0])
-                a.append(value[1])
+                for val in value:
+                    a.append(val)
                 yield attr, a
-#            elif isinstance(value, Enum):
-#                yield str(value)
             elif isinstance(value, str):
                 yield attr, value
             elif isinstance(value, dict):

@@ -1,10 +1,8 @@
 from allowjson import Jsonable
 from enum import Enum, auto
 
-#Side = Enum("Side", "North East South West")
-#SideType = Enum("SidType", "Farm Road City River")
-
 class SideType(str, Enum):
+    Invalid = "invalid"
     Farm = "farm"
     Road = "road"
     City = "city"
@@ -21,7 +19,6 @@ class Side(str, Enum):
 
     def __str__(self):
         return '{0}'.format(self.value)
-
 
 class EndPoints(int, Enum):
     TopLeft = 1
@@ -45,6 +42,7 @@ class EndPoints(int, Enum):
 class Tile(Jsonable):
     def __init__(self):
         self.id = -1
+        self.order = -1
         self.image = ""
         self.cloister = False
         self.sides = dict()
@@ -53,6 +51,7 @@ class Tile(Jsonable):
 class Route(Jsonable):
     def __init__(self):
         self.rid = -1
+        self.route_type = SideType.Invalid
         self.touchingF = []
         self.pendant = False
         self.endpoints = []
