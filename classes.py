@@ -1,5 +1,6 @@
 from allowjson import Jsonable
 from enum import Enum, auto
+import json
 
 class SideType(str, Enum):
     Invalid = "invalid"
@@ -47,12 +48,46 @@ class Tile(Jsonable):
         self.cloister = False
         self.sides = dict()
         self.routes = []
+     
+    @staticmethod
+    def Load_Tiles(jsonText):
+        new_tiles = []
+        json_tiles = json.loads(jsonText)
+        for tile in json_tiles:
+            ntile = Tile()
+            ntile.id = tile["id"]
+            ntile.order = tile["order"]
+            ntile.image = tile["image"]
+            ntile.cloister = tile["cloister"]
+            for jsonSide in tile["sides"]:
+                ntile.sides[Side(jsonSide)] = SideType(tile["sides"][jsonSide])
+
+            
+            for jsonRoute in tile["routes"]:
+                new_route = Route()
+                new_route.rid = jsonRoute["rid"]
+                new_route.route_type = SideType(jsonRoute["route_type"])
+        
+                new_route.meeple_pos = (jsonRoute["meeple_pos"][0], jsonRoute["meeple_pos"][1])
+
+                for json_touching in jsonRoute["touching_cities"]:
+                    new_route.touching_cities.append(json_touching)
+
+                for jsonRoutePart in jsonRoute["endpoints"]:
+                    new_route.endpoints.append(EndPoints(jsonRoutePart))
+                
+                ntile.routes.append(new_route)
+
+            new_tiles.append(ntile)
+        
+        return new_tiles
+
 
 class Route(Jsonable):
     def __init__(self):
         self.rid = -1
         self.route_type = SideType.Invalid
-        self.touchingF = []
+        self.touching_cities = []
         self.pendant = False
         self.endpoints = []
         self.meeple_pos = (0, 0)
